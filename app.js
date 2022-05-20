@@ -1,67 +1,45 @@
 const startTimerButton = document.querySelector('#startTimerButton');
 const stopTimerButton = document.querySelector('#stopTimerButton');
+const minutesSelect = document.querySelector('#minutesSelect');
+const timeDisplay = document.querySelector('#timeDisplay');
+let sound = new Audio('/audio-files/iphone_alarm.mp3');
 
+let startTime;
+let interval; //declaring this variable outside of the function allows me to access the interval variable with both buttons.
 
 minutesSelect.addEventListener('change', function () {
-    timeDisplay.innerText = `${this.value}:${secondsSelect.value}`
-});
-secondsSelect.addEventListener('change', function () {
-    timeDisplay.innerText = `${minutesSelect.value}:${this.value}`
-});
-
-startTimerButton.addEventListener('click', function () {
-    const minutes = minutesSelect.value;
-    const seconds = secondsSelect.value;
-    timeControl(minutes, seconds);
+    startTime = this.value;
+    timeDisplay.innerText = `${startTime}:00`
 })
 
-//original code
-// function timeControl(minutes, seconds) {
-//     const timeDisplay = document.querySelector('#timeDisplay');
-//     const interval = setInterval(countDown, 1000);
-//     function countDown() {
-//         if (seconds < 10) {
-//             timeDisplay.innerText = `${minutes}:0${seconds}`;
-//         } else {
-//             timeDisplay.innerText = `${minutes}:${seconds}`;
-//         }
-//         seconds--;
-//         if (seconds == 00) {
-//             minutes--;
-//             seconds = 59;
-//             if (minutes == 0) {
-//                 clearInterval(interval);
-//             }
-//         }
+startTimerButton.addEventListener('click', timeControl);
 
-//     }
-// }
-
-function timeControl(minutes, seconds) {
-    const timeDisplay = document.querySelector('#timeDisplay');
-    const interval = setInterval(countDown, 1000);
-    stopTimerButton.addEventListener('click', function () {
-        clearInterval(interval);
-        minutes = 0;
-        seconds = 0;
-        timeDisplay.innerText = `${minutes}:0${seconds}`;
-    })
-    function countDown() {
-        if (seconds < 10) {
-            timeDisplay.innerText = `${minutes}:0${seconds}`;
-        } else {
-            timeDisplay.innerText = `${minutes}:${seconds}`;
-        }
-        seconds--;
-        if (seconds == 0) {
-            minutes--;
-            seconds = 59;
-            if (minutes == 0) {
-                clearInterval(interval);
+function timeControl() {
+    let startTimeInSeconds = startTime * 60;
+    interval = setInterval(countdown, 1000);
+    function countdown() {
+        let minutes = Math.floor(startTimeInSeconds / 60);
+        let seconds = startTimeInSeconds % 60;
+        if (startTimeInSeconds >= 0) {
+            if (seconds < 10) {
+                timeDisplay.innerText = `${minutes}:0${seconds}`;
+            } else {
+                timeDisplay.innerText = `${minutes}:${seconds}`;
             }
+            startTimeInSeconds--;
+        } else {
+            timeDisplay.innerText = 'Time is up!';
+            sound.play();
+            clearInterval(interval);
         }
     }
 };
-//having issues if I set the timer to 15 seconds. It counts down to 0:00, then skips to -1:59
-//How could I fix this?
+
+stopTimerButton.addEventListener('click', function () {
+    timeDisplay.innerText = 'Timer stopped'
+    sound.pause();
+    clearInterval(interval);
+});
+
+
 
