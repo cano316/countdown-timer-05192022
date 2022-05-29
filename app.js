@@ -35,9 +35,15 @@ function timeControl() {
     }
 };
 
+//button to stop timer, display time stopped text, and stop alarm sound
 stopTimerButton.addEventListener('click', function () {
     timeDisplay.innerText = 'Timer stopped'
     sound.pause();
+    clearInterval(interval);
+});
+//double click to clear interval and reset the timer
+stopTimerButton.addEventListener('dblclick', function () {
+    timeDisplay.innerText = '0:00'
     clearInterval(interval);
 });
 
